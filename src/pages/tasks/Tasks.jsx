@@ -123,7 +123,7 @@ export const Tasks = () => {
             ))}
         </article>
         <h2>Completed</h2>
-        <article className="lista-tareas" id="lista-completadas">
+        <article className="lista-tareas" id="lista-tareas-completadas">
           {tasks
             // Solo mostrar en la vista las tareas cuyo task.status === "completed"
             .filter((task) => task.status === "completed")

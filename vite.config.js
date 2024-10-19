@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { ghPages } from "vite-plugin-gh-pages";
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [react(), ghPages()],
+  base: "/to-do-list/" // Esto es importante para que GitHub Pages cargue correctamente tu aplicación.
+});
