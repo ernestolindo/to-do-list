@@ -1,32 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { useEffect } from "react";
 
 export const Tasks = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset, setValue } = useForm();
+  const [tasks, setTasks] = useState([]);
+  const [editId, setEditId] = useState(null);
 
+  // Agregar una nueva tarea
   const addTask = async (data) => {
     console.log(data);
     const docRef = await addDoc(collection(db, "tasks"), {
       task_content: data.task,
-      list: data.list
+      status: "pending"
     });
     console.log(docRef);
+    reset(); // Limpiar los inputs
+    getTasks();
   };
 
-  // Mostrar "Mi lista" por defecto en input list; cuando el usuario seleccion el input, seleccionar el texto
-  const [inputValue, setInputValue] = useState("Mi lista");
-
-  const handleFocus = (event) => {
-    event.target.select(); // Selecciona el texto cuando se selecciona el input
+  // Traer las tareas desde la base de datos
+  const getTasks = async () => {
+    const tasksCollection = await getDocs(collection(db, "tasks"));
+    const data = tasksCollection.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    console.log(data);
+    setTasks(data);
   };
 
+  // Obtener los datos de la tarea y setearlos en el input del form
+  const editTask = (task) => {
+    console.log("Editando un producto");
+    console.log(task);
+    setValue("task", task.task_content);
+    // Guardamos el id para poder actualizar el producto
+    setEditId(task.id);
+  };
+
+  // Editar una tarea
+  const updateTask = async (data) => {
+    const docRef = doc(db, "tasks", editId);
+
+    await updateDoc(docRef, {
+      task_content: data.task
+    });
+
+    setEditId(null);
+    reset();
+    getTasks();
+  };
+
+  // Marcar una tarea como completada
+
+  // Marcar una tarea como incompleta
+
+  // Eliminar una tarea
+
+  useEffect(() => {
+    // Ejecutamos funciones al momento de montar el componente
+    getTasks();
+  }, []);
   return (
     <>
-      <h2>Ingresar una nueva tarea</h2>
-      <form onSubmit={handleSubmit(addTask)}>
+      <form onSubmit={editId ? handleSubmit(updateTask) : handleSubmit(addTask)}>
         <label htmlFor="task">Tarea</label>
         <input
           type="text"
@@ -35,19 +72,18 @@ export const Tasks = () => {
           {...register("task")}
           required
         />
-        <label htmlFor="list">Lista</label>
-        <input
-          type="text"
-          id="list"
-          value={inputValue} // El valor por defecto es "Mi lista"
-          onFocus={handleFocus} // Selecciona el texto cuando se hace clic en el input
-          onChange={(e) => setInputValue(e.target.value)} // Actualiza el valor cuando el usuario escribe
-          placeholder="Ingresa una lista"
-          {...register("list")}
-          required
-        />
-        <button type="submit">Agregar</button>
+        <button type="submit">{editId ? "Editar" : "Enviar"}</button>
       </form>
+      <main>
+        <h2>Lista de tareas</h2>
+        {tasks.map((task) => (
+          <article className="task-container" key={task.id}>
+            <p>{task.task_content}</p>
+            <button onClick={() => editTask(task)}>Editar</button>
+            <button>Marcar como completada</button>
+          </article>
+        ))}
+      </main>
     </>
   );
 };
