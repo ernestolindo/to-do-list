@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useEffect } from "react";
 
@@ -52,19 +52,45 @@ export const Tasks = () => {
   };
 
   // Marcar una tarea como completada
+  const completeTask = async (id) => {
+    const docRef = doc(db, "tasks", id);
+
+    await updateDoc(docRef, {
+      status: "completed"
+    });
+
+    getTasks();
+  };
 
   // Marcar una tarea como incompleta
+  const uncompleteTask = async (id) => {
+    const docRef = doc(db, "tasks", id);
+
+    await updateDoc(docRef, {
+      status: "pending"
+    });
+
+    getTasks();
+  };
 
   // Eliminar una tarea
+  const deleteTask = async (id) => {
+    const docRef = doc(db, "tasks", id);
+    await deleteDoc(docRef);
+
+    getTasks();
+  };
 
   useEffect(() => {
     // Ejecutamos funciones al momento de montar el componente
     getTasks();
   }, []);
   return (
-    <>
-      <form onSubmit={editId ? handleSubmit(updateTask) : handleSubmit(addTask)}>
-        <label htmlFor="task">Tarea</label>
+    <main className="main-container contenedor">
+      <form
+        className="form-container"
+        onSubmit={editId ? handleSubmit(updateTask) : handleSubmit(addTask)}
+      >
         <input
           type="text"
           placeholder="Pasear al perro..."
@@ -72,18 +98,52 @@ export const Tasks = () => {
           {...register("task")}
           required
         />
-        <button type="submit">{editId ? "Editar" : "Enviar"}</button>
+        <button type="submit">
+          {editId ? <i class="fa-solid fa-rotate-right"></i> : <i class="fa-solid fa-plus"></i>}
+        </button>
       </form>
-      <main>
-        <h2>Lista de tareas</h2>
-        {tasks.map((task) => (
-          <article className="task-container" key={task.id}>
-            <p>{task.task_content}</p>
-            <button onClick={() => editTask(task)}>Editar</button>
-            <button>Marcar como completada</button>
-          </article>
-        ))}
-      </main>
-    </>
+      <section className="tareas-container">
+        <h2>Task list</h2>
+        <article className="lista-tareas" id="lista-pendientes">
+          {tasks
+            // Solo mostrar en la vista las tareas cuyo task.status === "pending"
+            .filter((task) => task.status === "pending")
+
+            .map((task) => (
+              <section className="task-container" key={task.id}>
+                <button className="check-button" onClick={() => completeTask(task.id)}></button>
+                <p className="task-content">{task.task_content}</p>
+                <button className="action-button" onClick={() => editTask(task)}>
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button className="action-button" onClick={() => deleteTask(task.id)}>
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </section>
+            ))}
+        </article>
+        <h2>Completed</h2>
+        <article className="lista-tareas" id="lista-completadas">
+          {tasks
+            // Solo mostrar en la vista las tareas cuyo task.status === "completed"
+            .filter((task) => task.status === "completed")
+
+            .map((task) => (
+              <section className="task-container" key={task.id}>
+                <button className="uncheck-button" onClick={() => uncompleteTask(task.id)}>
+                  <i class="fa-solid fa-check"></i>
+                </button>
+                <p className="task-content">{task.task_content}</p>
+                <button className="action-button" onClick={() => editTask(task)}>
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button className="action-button" onClick={() => deleteTask(task.id)}>
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </section>
+            ))}
+        </article>
+      </section>
+    </main>
   );
 };

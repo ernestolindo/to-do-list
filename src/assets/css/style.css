@@ -1,0 +1,178 @@
+/* Fuente */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
+/* Paleta de colores */
+:root {
+  --fondoNegro: rgb(42, 45, 61);
+  --fondoAzul: rgb(83, 83, 165);
+  --titulos: #ffffff;
+  --principal: #dfe9f3;
+  --boton: rgb(86, 63, 218);
+  --botonHover: rgb(66, 49, 160);
+}
+
+/* Globales */
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-size: 1vw;
+  font-family: "Open Sans", serif;
+  color: var(--principal);
+  background-image: linear-gradient(to bottom, var(--fondoAzul) 0%, var(--fondoNegro) 35%);
+}
+
+.contenedor {
+  max-width: 50vw;
+  margin: 0 auto;
+}
+
+/* Tipografia */
+h1 {
+  font-size: 3vw;
+}
+h2 {
+  font-size: 2vw;
+}
+h3 {
+  font-size: 1.5vw;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--titulos);
+  text-align: center;
+}
+
+/* Header */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-container .mi-cuenta img {
+  height: 4vw;
+  width: 4vw;
+  border-radius: 50%;
+}
+
+/* Footer */
+.footer-bg {
+  height: 25vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to top, var(--fondoAzul) 0%, var(--fondoNegro) 100%);
+}
+
+/* Estilo para el contenedor del input y botón */
+.form-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Estilo del input */
+input[type="text"] {
+  padding: 10px;
+  border: 2px solid var(--fondoAzul);
+  border-radius: 5px;
+  background-color: var(--fondoNegro);
+  color: var(--principal);
+  width: 100%;
+  font-size: 16px;
+}
+
+input[type="text"]::placeholder {
+  color: var(--principal);
+  opacity: 0.7;
+}
+
+/* Estilo del botón */
+button[type="submit"] {
+  padding: 10px 15px;
+  background-color: var(--boton);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--titulos);
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: var(--botonHover);
+}
+
+/* Estilo del icono dentro del botón */
+button[type="submit"] i {
+  margin: 0;
+}
+
+/* Estilo general del contenedor de la tarea */
+.task-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--fondoAzul);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo del botón check (círculo vacío) */
+.check-button,
+.uncheck-button {
+  background-color: transparent;
+  border: 2px solid var(--titulos);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  margin-right: 15px;
+  color: var(--titulos);
+  transition: color 0.3s ease;
+}
+
+.check-button:hover,
+.uncheck-button:hover {
+  border: 2px solid var(--principal);
+}
+
+/* Estilo del contenido de la tarea */
+.task-content {
+  flex-grow: 1;
+  color: var(--principal);
+  font-size: 16px;
+  margin-right: 15px;
+}
+
+/* Estilo de los botones de acción (editar y eliminar) */
+.action-button {
+  background-color: transparent;
+  border: none;
+  color: var(--titulos);
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.action-button:hover {
+  color: var(--principal);
+}
+
+#lista-completadas .task-container .task-content {
+  text-decoration: line-through;
+}
